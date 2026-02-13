@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardiac CTA Scanning Guide for Technologists</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #0a1628;
+            --deep-blue: #1a3a52;
+            --ocean: #2c5f8d;
+            --cyan: #4a9aba;
+            --light-cyan: #7ec8e3;
+            --ice: #e8f4f8;
+            --white: #ffffff;
+            --accent-red: #d84a4a;
+            --accent-gold: #daa520;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--midnight) 0%, var(--deep-blue) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        header {
+            position: relative;
+            background: linear-gradient(180deg, rgba(26, 58, 82, 0.95) 0%, rgba(10, 22, 40, 0.98) 100%);
+            backdrop-filter: blur(10px);
+            padding: 4rem 2rem 6rem;
+            text-align: center;
+            border-bottom: 3px solid var(--cyan);
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(74, 154, 186, 0.1) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+        
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 20px rgba(74, 154, 186, 0.4);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--light-cyan);
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+        }
+        
+        .heartbeat-icon {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10% { transform: scale(1.1); }
+            20% { transform: scale(1); }
+            30% { transform: scale(1.15); }
+            40% { transform: scale(1); }
+        }
+        
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .content-grid {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(74, 154, 186, 0.3);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyan) 0%, var(--light-cyan) 100%);
+        }
+        
+        .card.featured::before {
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent-red) 0%, var(--accent-gold) 100%);
+        }
+        
+        h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2rem;
+            color: var(--deep-blue);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--ocean) 0%, var(--cyan) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            color: var(--ocean);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+        
+        .protocol-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .protocol-item {
+            background: var(--ice);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--cyan);
+        }
+        
+        .protocol-item strong {
+            display: block;
+            color: var(--deep-blue);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(74, 154, 186, 0.1) 0%, rgba(126, 200, 227, 0.1) 100%);
+            border-left: 4px solid var(--accent-gold);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, rgba(216, 74, 74, 0.05) 0%, rgba(216, 74, 74, 0.1) 100%);
+            border-left: 4px solid var(--accent-red);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .warning-box p {
+            color: var(--text-primary);
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--ocean);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1.1rem; }
+            .two-column { grid-template-columns: 1fr; }
+            .protocol-grid { grid-template-columns: 1fr; }
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--ice);
+        }
+        
+        th {
+            background: var(--ice);
+            color: var(--deep-blue);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: rgba(74, 154, 186, 0.05);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--ocean);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+        
+        .badge.critical {
+            background: var(--accent-red);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(26, 58, 82, 0.5);
+            backdrop-filter: blur(10px);
+            color: var(--light-cyan);
+            margin-top: 4rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    
+    <header>
+        <svg class="heartbeat-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 85L20 55C10 45 10 30 20 20C30 10 45 10 50 20C55 10 70 10 80 20C90 30 90 45 80 55L50 85Z" stroke="#4a9aba" stroke-width="3" fill="rgba(74, 154, 186, 0.3)"/>
+            <path d="M10 50 L25 50 L30 40 L35 60 L40 35 L45 55 L50 50 L90 50" stroke="#7ec8e3" stroke-width="2.5" fill="none"/>
+        </svg>
+        <h1>Cardiac CTA Scanning</h1>
+        <p class="subtitle">A Comprehensive Guide for Technologists</p>
+    </header>
+    
+    <main>
+        <div class="content-grid">
+            
+            <div class="card featured">
+                <h2><span class="icon">CT</span>What is Cardiac CTA?</h2>
+                <p><strong>Cardiac Computed Tomography Angiography (CTA)</strong> is a non-invasive imaging technique that uses X-rays and contrast media to visualize the coronary arteries and cardiac structures with exceptional detail.</p>
+                
+                <div class="highlight-box">
+                    <p><strong>Primary Applications:</strong></p>
+                    <ul>
+                        <li>Evaluation of coronary artery disease (CAD)</li>
+                        <li>Assessment of coronary artery anatomy before surgical procedures</li>
+                        <li>Detection of coronary anomalies</li>
+                        <li>Evaluation of bypass grafts and stents</li>
+                        <li>Calcium scoring for risk stratification</li>
+                    </ul>
+                </div>
+                
+                <p>Cardiac CTA provides superior spatial resolution compared to other non-invasive cardiac imaging modalities and can visualize both coronary arteries and cardiac chambers in a single examination.</p>
+            </div>
+            
+            <div class="card">
+                <h2><span class="icon">1</span>Patient Preparation</h2>
+                
+                <h3>Pre-Scan Requirements</h3>
+                <ul>
+                    <li><strong>Heart Rate Control:</strong> Target HR &lt;65 bpm (ideally &lt;60 bpm) for optimal image quality</li>
+                    <li><strong>Beta-blockers:</strong> Administer if HR &gt;65 bpm (metoprolol 25-100mg PO or 5-15mg IV)</li>
+                    <li><strong>Sublingual nitroglycerin:</strong> 0.4-0.8mg given 3-5 minutes before scan (contraindicated with recent PDE-5 inhibitor use)</li>
+                    <li><strong>Fasting:</strong> 4 hours prior to scan</li>
+                </ul>
+                
+                <h3>Patient Positioning</h3>
+                <ul>
+                    <li>Supine position, arms raised above head</li>
+                    <li>ECG leads placement: avoid metal artifacts in scan field</li>
+                    <li>Breathing instructions practice before scanning</li>
+                    <li>IV line: 18-20 gauge in antecubital vein (right preferred)</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <p><strong>⚠️ Contraindications:</strong></p>
+                    <ul>
+                        <li>Severe contrast allergy (without pre-medication)</li>
+                        <li>Pregnancy</li>
+                        <li>Renal insufficiency (eGFR &lt;30 mL/min)</li>
+                        <li>Inability to hold breath for 5-10 seconds</li>
+                        <li>Uncontrolled heart rate/arrhythmias</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><span class="icon">2</span>Scanning Protocol</h2>
+                
+                <h3>Scout and Calcium Scoring</h3>
+                <p><span class="step-number">1</span><strong>AP and Lateral Scout:</strong> Verify patient position and scan range</p>
+                <p><span class="step-number">2</span><strong>Calcium Score (optional):</strong> Non-contrast scan from carina to cardiac base</p>
+                
+                <div class="protocol-grid">
+                    <div class="protocol-item">
+                        <strong>kVp</strong>
+                        120 kVp (standard)<br>
+                        100 kVp (BMI &lt;30)
+                    </div>
+                    <div class="protocol-item">
+                        <strong>mAs</strong>
+                        200-400 mAs<br>
+                        (dose modulation)
+                    </div>
+                    <div class="protocol-item">
+                        <strong>Slice Thickness</strong>
+                        2.5-3.0 mm<br>
+                        (calcium scoring)
+                    </div>
+                    <div class="protocol-item">
+                        <strong>Gating</strong>
+                        Prospective ECG<br>
+                        (70-80% R-R interval)
+                    </div>
+                </div>
+                
+                <h3>Contrast-Enhanced Angiography<span class="badge critical">Critical</span></h3>
+                <p><span class="step-number">3</span><strong>Timing Bolus or Bolus Tracking:</strong></p>
+                <ul>
+                    <li><strong>Bolus tracking:</strong> ROI in descending aorta at carina level (threshold: 100-150 HU)</li>
+                    <li><strong>Scan delay:</strong> Typically 5-8 seconds after threshold reached</li>
+                </ul>
+                
+                <p><span class="step-number">4</span><strong>Contrast Injection Protocol:</strong></p>
+                <ul>
+                    <li>Contrast volume: 60-100 mL (based on scan time and flow rate)</li>
+                    <li>Iodine concentration: 350-400 mg/mL</li>
+                    <li>Flow rate: 5-6 mL/sec</li>
+                    <li>Saline chaser: 40-50 mL at same flow rate</li>
+                </ul>
+                
+                <div class="highlight-box">
+                    <p><strong>💡 Pro Tip:</strong> Use dual-syringe injector for seamless transition from contrast to saline. This reduces perivenous artifacts and ensures compact contrast bolus.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><span class="icon">3</span>Acquisition Parameters</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Typical Range</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Scan Direction</strong></td>
+                            <td>Caudocranial</td>
+                            <td>Reduces respiratory motion</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gantry Rotation</strong></td>
+                            <td>0.27-0.35 sec</td>
+                            <td>Faster = less motion artifact</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Detector Collimation</strong></td>
+                            <td>64 × 0.5 to 320 × 0.5</td>
+                            <td>Depends on scanner type</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pitch</strong></td>
+                            <td>0.2-0.45</td>
+                            <td>Lower pitch = better quality</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Reconstruction</strong></td>
+                            <td>0.5-0.75 mm slices</td>
+                            <td>10-20% overlap</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Kernel</strong></td>
+                            <td>Medium-smooth</td>
+                            <td>Balance detail vs. noise</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>ECG Gating Strategies</h3>
+                <div class="two-column">
+                    <div>
+                        <h4>Prospective Triggering</h4>
+                        <ul>
+                            <li><strong>When:</strong> Regular rhythm, HR &lt;65 bpm</li>
+                            <li><strong>Advantage:</strong> 70-90% dose reduction</li>
+                            <li><strong>Phase:</strong> Usually 70-80% of R-R</li>
+                            <li><strong>Limitation:</strong> Single cardiac phase</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Retrospective Gating</h4>
+                        <ul>
+                            <li><strong>When:</strong> Irregular rhythm, functional analysis needed</li>
+                            <li><strong>Advantage:</strong> Multiple cardiac phases</li>
+                            <li><strong>Phase:</strong> Reconstruction at any % of R-R</li>
+                            <li><strong>Limitation:</strong> Higher radiation dose</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><span class="icon">4</span>Image Quality Optimization</h2>
+                
+                <h3>Key Quality Factors</h3>
+                
+                <div class="protocol-grid">
+                    <div class="protocol-item">
+                        <strong>Heart Rate</strong>
+                        Lower is better<br>
+                        &lt;60 bpm ideal
+                    </div>
+                    <div class="protocol-item">
+                        <strong>Heart Rate Variability</strong>
+                        &lt;5 bpm variation<br>
+                        during scan
+                    </div>
+                    <div class="protocol-item">
+                        <strong>Contrast Density</strong>
+                        Target: 300-400 HU<br>
+                        in coronary arteries
+                    </div>
+                    <div class="protocol-item">
+                        <strong>Breath Hold</strong>
+                        End-inspiration<br>
+                        5-10 seconds
+                    </div>
+                </div>
+                
+                <h3>Common Artifacts & Solutions</h3>
+                <ul>
+                    <li><strong>Motion artifact:</strong> Improve heart rate control, use faster gantry rotation, optimize reconstruction phase</li>
+                    <li><strong>Stair-step artifact:</strong> Ensure consistent breathing, consider breath-hold coaching</li>
+                    <li><strong>Beam hardening:</strong> Reduce from metallic objects (pacemaker, ICD), use iterative reconstruction</li>
+                    <li><strong>Blooming artifact:</strong> From calcium/stents - use sharper kernels, lower kVp in obese patients</li>
+                    <li><strong>Contrast streaming:</strong> Optimize injection protocol, ensure adequate saline flush</li>
+                </ul>
+                
+                <div class="highlight-box">
+                    <p><strong>🎯 Quality Checklist Before Scanning:</strong></p>
+                    <ul>
+                        <li>✓ Heart rate &lt;65 bpm and regular rhythm</li>
+                        <li>✓ Good quality ECG tracing visible</li>
+                        <li>✓ IV line patent, good blood return</li>
+                        <li>✓ Patient comfortable, understands breath-hold instructions</li>
+                        <li>✓ Nitroglycerin administered (if not contraindicated)</li>
+                        <li>✓ Scan range verified on scout</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><span class="icon">5</span>Post-Processing & Reconstruction</h2>
+                
+                <h3>Standard Reconstructions</h3>
+                <ul>
+                    <li><strong>Axial images:</strong> 0.5-0.75 mm slices (primary dataset)</li>
+                    <li><strong>MPR (Multiplanar Reformation):</strong> Coronal and sagittal views</li>
+                    <li><strong>MIP (Maximum Intensity Projection):</strong> Thin-slab MIP for vessel visualization</li>
+                    <li><strong>CPR (Curved Planar Reformation):</strong> Following individual coronary arteries</li>
+                    <li><strong>3D Volume Rendering:</strong> Global cardiac and coronary anatomy</li>
+                </ul>
+                
+                <h3>Phase Selection</h3>
+                <p>For retrospective ECG-gated studies, reconstruct images at multiple phases:</p>
+                <ul>
+                    <li><strong>Mid-diastole:</strong> 70-80% of R-R interval (primary phase for evaluation)</li>
+                    <li><strong>End-systole:</strong> 40-45% of R-R interval (backup phase)</li>
+                    <li><strong>Multiple phases:</strong> Every 10% for functional analysis if needed</li>
+                </ul>
+                
+                <h3>Radiation Dose Considerations<span class="badge">Important</span></h3>
+                <div class="warning-box">
+                    <p><strong>Dose Reduction Strategies:</strong></p>
+                    <ul>
+                        <li>Use prospective ECG triggering when possible (vs. retrospective)</li>
+                        <li>Apply tube current modulation (TCM)</li>
+                        <li>Reduce kVp in lower BMI patients (100 kVp instead of 120 kVp)</li>
+                        <li>Optimize scan range (limit to cardiac region)</li>
+                        <li>Use iterative reconstruction algorithms</li>
+                        <li>Target effective dose: 1-5 mSv (prospective), 5-15 mSv (retrospective)</li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+    
+    <footer>
+        <p><strong>Cardiac CTA Education Resource</strong></p>
+        <p>Designed for radiologic technologists and CT specialists</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">Always follow your institution's specific protocols and manufacturer guidelines</p>
+    </footer>
+    
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // Intersection Observer for stagger animations on scroll
+        const cards = document.querySelectorAll('.card');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        cards.forEach(card => observer.observe(card));
+    </script>
+</body>
+</html>
